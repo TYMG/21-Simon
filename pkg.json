@@ -1,0 +1,11 @@
+{
+  "name": "21-simon",
+  "version": "6.6.6",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "TYMG",
+  "license": "ISC"
+}
