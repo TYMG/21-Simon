@@ -12,3 +12,17 @@ h2, h3 {
 body {
   margin: 2em;
 }
+
+div.gameboard {
+  margin: 0 auto;
+  position: fixed;
+  left:15%;
+  top:5%
+}
+
+#circle { 
+   width: 600px;
+   height: 600px;
+   background: black; 
+   border-radius: 50%;
+}
