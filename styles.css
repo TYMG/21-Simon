@@ -15,7 +15,7 @@ body {
 
 div.gameboard {
   margin: 0 auto;
-  position: fixed;
+  position: relative;
   left:15%;
   top:5%
 }
@@ -26,3 +26,105 @@ div.gameboard {
    background: black; 
    border-radius: 50%;
 }
+
+/*Simon Buttons*/
+/*Top Left*/
+#simon-button-top-left{
+  position:relative;
+  width:260px;
+  height:260px;
+  border-radius:100% 0 0 0;
+  top: 5%;
+  left: 5%;
+  background:green;
+}
+
+#simon-button-top-left:after{
+  position: absolute;
+  content: "";
+  width:110px;
+  height:110px;
+  border-radius:100% 0 0 0;
+  background: black;
+  top: 150px;
+  left: 150px;
+  right: 0;
+  bottom:0;
+}
+
+
+
+/*Top Right (RED) */
+#simon-button-top-right{
+  position:relative;
+  width:260px;
+  height:260px;
+  border-radius:100% 0 0 0;
+  bottom: 38.4%;
+  left: 50%;
+  background:red;
+  transform: rotate(90deg);
+}
+
+#simon-button-top-right:after{
+  position: absolute;
+  content: "";
+  width:110px;
+  height:110px;
+  border-radius:100% 0 0 0;
+  background: black;
+  top: 150px;
+  left: 150px;
+  right: 0;
+  bottom:0;
+}
+
+
+/*Bottom Left (YELLOW)*/
+#simon-button-bottom-left{
+  position:relative;
+  width:260px;
+  height:260px;
+  border-radius:100% 0 0 0;
+  background:yellow;
+  transform: rotate(-90deg);
+  bottom: 36%;
+  left:5%;
+}
+
+#simon-button-bottom-left:after{
+  position: absolute;
+  content: "";
+  width:110px;
+  height:110px;
+  border-radius:100% 0 0 0;
+  background:black;
+  top: 150px;
+  left: 150px;
+  right: 0;
+  bottom:0;
+}
+
+
+
+/*Bottom Right (BLUE)*/
+#simon-button-bottom-right{
+  position:relative;
+  width:260px;
+  height:260px;
+  border-radius:0 0 100% 0;
+  background:blue;
+  bottom:79%;
+  left:50%
+}
+
+#simon-button-bottom-right:after{
+  position: absolute;
+  content: "";
+  width:110px;
+  height:110px;
+  border-radius:0 0 100% 0;
+  background:black;
+}
+
+
