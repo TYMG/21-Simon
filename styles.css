@@ -36,7 +36,11 @@ div.gameboard {
   border-radius:100% 0 0 0;
   top: 5%;
   left: 5%;
-  background:green;
+  background:rgba(0, 128, 0, .60);
+}
+
+#simon-button-top-left:active{
+  background:rgba(0, 128, 0, 1);
 }
 
 #simon-button-top-left:after{
@@ -54,6 +58,7 @@ div.gameboard {
 
 
 
+
 /*Top Right (RED) */
 #simon-button-top-right{
   position:relative;
@@ -62,8 +67,12 @@ div.gameboard {
   border-radius:100% 0 0 0;
   bottom: 38.4%;
   left: 50%;
-  background:red;
+  background:rgba(255,0,0,.60);
   transform: rotate(90deg);
+}
+
+#simon-button-top-right:active{
+    background:rgba(255,0,0,1);
 }
 
 #simon-button-top-right:after{
@@ -86,10 +95,14 @@ div.gameboard {
   width:260px;
   height:260px;
   border-radius:100% 0 0 0;
-  background:yellow;
+  background:rgba(255,255,0,.60);
   transform: rotate(-90deg);
   bottom: 36%;
   left:5%;
+}
+
+#simon-button-bottom-left:active{
+  background: rgba(255,255,0,1.00)
 }
 
 #simon-button-bottom-left:after{
@@ -113,10 +126,15 @@ div.gameboard {
   width:260px;
   height:260px;
   border-radius:0 0 100% 0;
-  background:blue;
+  background:rgba(9,60,255,.60);
   bottom:79%;
   left:50%
 }
+
+#simon-button-bottom-right:active{
+  background: rgba(9,60,255,1.00)
+}
+
 
 #simon-button-bottom-right:after{
   position: absolute;
