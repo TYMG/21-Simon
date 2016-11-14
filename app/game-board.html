@@ -1,8 +1,12 @@
 <div class="background">
     <div class="gameboard" id="circle"> 
-        <div id="simon-button-top-left"></div>
-        <div id="simon-button-top-right"></div>
-        <div id="simon-button-bottom-left"></div>
-        <div id="simon-button-bottom-right"></div>
+        <div id="simon-button-top-left" (click)="eventEmitClick(1)" ></div>
+        <div id="simon-button-top-right" (click)="eventEmitClick(2)"></div>
+        <div id="center-console">
+            <h2 class="game-name">21-Simon</h2>
+            <div id="start-button"></div>
+        </div>
+        <div id="simon-button-bottom-left" (click)="eventEmitClick(3)"></div>
+        <div id="simon-button-bottom-right" (click)="eventEmitClick(4)"></div>
     </div>
 </div>
