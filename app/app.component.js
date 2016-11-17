@@ -12,14 +12,17 @@ var core_1 = require('@angular/core');
 var AppComponent = (function () {
     function AppComponent() {
     }
-    AppComponent.prototype.eventEmitClick = function (color) {
-        console.log(color);
+    AppComponent.prototype.gameButtonClick = function ($event) {
+        console.log($event);
+    };
+    AppComponent.prototype.startButtonClick = function ($event) {
+        console.log($event);
     };
     AppComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
             selector: 'my-app',
-            templateUrl: "game-board.html",
+            template: "<game-board (gamepadButtonEvent)=\"gameButtonClick($event)\" (startButtonEvent)=\"startButtonClick($event)\"></game-board>",
             styleUrls: ["buttons.css"]
         }), 
         __metadata('design:paramtypes', [])
