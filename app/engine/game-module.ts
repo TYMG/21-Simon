@@ -11,8 +11,10 @@ export enum Color {
         BLUE = 3
     };
 
+
+
 export enum GameStatus {
-        NON_RUNNING= 0,
+        NOT_RUNNING= 0,
         RUNNING = 1,
         GENERATING_PATTERN = 2,
         DISPLAYING_PATTERN = 3,

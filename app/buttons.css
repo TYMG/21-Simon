@@ -38,7 +38,7 @@
   border-radius:100% 0 0 0;
   bottom: 42.6%;
   left: 51%;
-  background:rgba(255,0,0,.60);
+  background:rgba(186,23,15,.66);
   transform: rotate(90deg);
 }
 
@@ -77,8 +77,9 @@
 }
 
 #simon-button-bottom-left:active{
-  background: rgba(255,255,0,1.00)
+  background: rgba(255,255,0,1);
 }
+
 
 #simon-button-bottom-left:after{
   position: absolute;
@@ -107,9 +108,8 @@
 }
 
 #simon-button-bottom-right:active{
-  background: rgba(9,60,255,1.00)
+  background: rgba(9,60,255,1);
 }
-
 
 #simon-button-bottom-right:after{
   position: absolute;

@@ -12,6 +12,7 @@ var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
 var app_component_1 = require('./app.component');
 var game_board_component_1 = require('./game-board.component');
+var pattern_service_1 = require('./engine/pattern-service');
 var AppModule = (function () {
     function AppModule() {
     }
@@ -22,6 +23,7 @@ var AppModule = (function () {
                 app_component_1.AppComponent,
                 game_board_component_1.GameBoardComponent
             ],
+            providers: [pattern_service_1.PatternService],
             bootstrap: [app_component_1.AppComponent]
         }), 
         __metadata('design:paramtypes', [])

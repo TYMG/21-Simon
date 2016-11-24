@@ -19,45 +19,58 @@ var game_module_1 = require('./game-module');
  * Validate Patterns
  *
  */
-var GameService = (function () {
-    function GameService() {
+var PatternService = (function () {
+    function PatternService() {
     }
-    GameService.prototype.createPattern = function () {
+    PatternService.prototype.createPattern = function () {
         if (this.pattern != undefined) {
             return undefined;
         }
         var pattern = [this.colorGenerator()];
         this.setPattern(pattern);
-        return pattern;
+        return Promise.resolve(pattern);
     };
-    GameService.prototype.updatePattern = function () {
+    PatternService.prototype.updatePattern = function () {
         if (this.getPattern != undefined) {
             this.createPattern;
             return;
         }
         var newColor = this.colorGenerator();
         this.getPattern().push(newColor);
-        return this.getPattern();
+        return Promise.resolve(this.getPattern());
     };
     /**
      * The Read Pattern will take a Color and a turn
      *
      * readPattern will take check is Color == Color[turn]
      */
-    GameService.prototype.readPattern = function (color, turn) {
+    PatternService.prototype.readPattern = function (color, turn) {
         if (color == undefined || turn == undefined) {
             //Should throw an exception, lazy
-            return false;
+            return Promise.resolve(false);
         }
         var patternTurnColor = this.pattern[turn];
         if (patternTurnColor.valueOf === color.valueOf) {
-            return true;
+            return Promise.resolve(true);
         }
-        return false;
+        return Promise.resolve(false);
     };
-    GameService.prototype.deletePattern = function () {
+    PatternService.prototype.deletePattern = function () {
+        this.pattern = new Array(0);
+        return Promise.resolve(true);
     };
-    GameService.prototype.colorGenerator = function () {
+    PatternService.prototype.generateTestPattern = function (size) {
+        if (size === 0) {
+            //go fuck yourself
+            return undefined;
+        }
+        var pattern = new Array(size);
+        for (var index = 0; index < size; index++) {
+            pattern[index] = this.colorGenerator();
+        }
+        return pattern;
+    };
+    PatternService.prototype.colorGenerator = function () {
         var colorIndex = Math.floor(Math.random() * 100);
         switch (colorIndex % 4) {
             case 0:
@@ -71,17 +84,17 @@ var GameService = (function () {
         }
         return undefined;
     };
-    GameService.prototype.getPattern = function () {
+    PatternService.prototype.getPattern = function () {
         return this.pattern;
     };
-    GameService.prototype.setPattern = function (pattern) {
+    PatternService.prototype.setPattern = function (pattern) {
         this.pattern = pattern;
     };
-    GameService = __decorate([
+    PatternService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [])
-    ], GameService);
-    return GameService;
+    ], PatternService);
+    return PatternService;
 }());
-exports.GameService = GameService;
+exports.PatternService = PatternService;
 //# sourceMappingURL=pattern-service.js.map

@@ -13,7 +13,7 @@
 var Color = exports.Color;
 ;
 (function (GameStatus) {
-    GameStatus[GameStatus["NON_RUNNING"] = 0] = "NON_RUNNING";
+    GameStatus[GameStatus["NOT_RUNNING"] = 0] = "NOT_RUNNING";
     GameStatus[GameStatus["RUNNING"] = 1] = "RUNNING";
     GameStatus[GameStatus["GENERATING_PATTERN"] = 2] = "GENERATING_PATTERN";
     GameStatus[GameStatus["DISPLAYING_PATTERN"] = 3] = "DISPLAYING_PATTERN";

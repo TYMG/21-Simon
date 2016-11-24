@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GameStatus,Color, Difficulty} from './game-module';
+import { GameStatus, Color, Difficulty } from './game-module';
 
 /**
  * 
@@ -11,26 +11,26 @@ import { GameStatus,Color, Difficulty} from './game-module';
  * 
  */
 @Injectable()
-export class GameService {
-    private pattern:Array<Color>;
-    
-    createPattern(){
-        if(this.pattern!=undefined){
+export class PatternService {
+    private pattern: Array<Color>;
+
+    createPattern(): Promise<Color[]> {
+        if (this.pattern != undefined) {
             return undefined;
         }
         let pattern: Array<Color> = [this.colorGenerator()];
         this.setPattern(pattern);
-        return pattern;
+        return Promise.resolve(pattern);
     }
 
-    updatePattern(){
-        if(this.getPattern!=undefined){
+    updatePattern(): Promise<Color[]> {
+        if (this.getPattern != undefined) {
             this.createPattern;
             return;
         }
-        let newColor:Color = this.colorGenerator();
+        let newColor: Color = this.colorGenerator();
         this.getPattern().push(newColor);
-        return this.getPattern();
+        return Promise.resolve(this.getPattern());
     }
 
     /**
@@ -38,25 +38,38 @@ export class GameService {
      * 
      * readPattern will take check is Color == Color[turn]
      */
-    readPattern(color:Color,turn:number):boolean{
-        if(color==undefined || turn==undefined){
+    readPattern(color: Color, turn: number): Promise<boolean> {
+        if (color == undefined || turn == undefined) {
             //Should throw an exception, lazy
-            return false;
+            return Promise.resolve(false);
         }
         let patternTurnColor = this.pattern[turn];
-        if(patternTurnColor.valueOf===color.valueOf){
-            return true;
+        if (patternTurnColor.valueOf === color.valueOf) {
+            return Promise.resolve(true);
         }
-        return false;
+        return Promise.resolve(false);
     }
 
-    deletePattern(){
-
+    deletePattern(): Promise<boolean> {
+        this.pattern = new Array<Color>(0);
+        return Promise.resolve(true);
     }
 
-    colorGenerator():Color{
-        let colorIndex:number =  Math.floor(Math.random() * 100);
-        switch(colorIndex%4){
+    generateTestPattern(size):Array<Color>{
+        if (size === 0) {
+            //go fuck yourself
+            return undefined;
+        }
+        let pattern = new Array<Color>(size);
+        for (var index = 0; index < size; index++) {
+            pattern[index]=this.colorGenerator();
+        }
+        return pattern;
+    }
+
+    private colorGenerator(): Color {
+        let colorIndex: number = Math.floor(Math.random() * 100);
+        switch (colorIndex % 4) {
             case 0:
                 return Color.GREEN;
             case 1:
@@ -69,12 +82,12 @@ export class GameService {
         return undefined;
     }
 
-    private getPattern():Array<Color>{
+    private getPattern(): Array<Color> {
         return this.pattern;
     }
 
-    private setPattern(pattern:Array<Color>):void{
-         this.pattern = pattern;
+    private setPattern(pattern: Array<Color>): void {
+        this.pattern = pattern;
     }
-    
+
 }
