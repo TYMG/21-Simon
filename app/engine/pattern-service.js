@@ -10,9 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var game_module_1 = require('./game-module');
+var BehaviorSubject_1 = require('rxjs/BehaviorSubject');
 /**
  *
- * GameService
+ * PatternService
  *
  * Create Patterns
  * Display Patterns
@@ -21,11 +22,12 @@ var game_module_1 = require('./game-module');
  */
 var PatternService = (function () {
     function PatternService() {
+        // Observable validatePattern source
+        this.validatePatternSource = new BehaviorSubject_1.BehaviorSubject(0);
+        // Observable navItem stream
+        this.validateItem$ = this.validatePatternSource.asObservable();
     }
     PatternService.prototype.createPattern = function () {
-        if (this.pattern != undefined) {
-            return undefined;
-        }
         var pattern = [this.colorGenerator()];
         this.setPattern(pattern);
         return Promise.resolve(pattern);
@@ -40,20 +42,35 @@ var PatternService = (function () {
         return Promise.resolve(this.getPattern());
     };
     /**
-     * The Read Pattern will take a Color and a turn
+     * The validatePattern will take a Color and a turn (where turn = index+1)
      *
-     * readPattern will take check is Color == Color[turn]
+     * validatePattern will take check is Color == Color[turn]
+     *
+     *
      */
-    PatternService.prototype.readPattern = function (color, turn) {
+    PatternService.prototype.validatePattern = function (color, turn) {
         if (color == undefined || turn == undefined) {
             //Should throw an exception, lazy
-            return Promise.resolve(false);
+            this.validatePatternSource.error("No Pattern or Turn");
         }
-        var patternTurnColor = this.pattern[turn];
-        if (patternTurnColor.valueOf === color.valueOf) {
-            return Promise.resolve(true);
+        if (this.pattern !== undefined) {
+            var patternIndex = turn - 1;
+            var patternTurnColor = this.pattern[patternIndex];
+            //if the Pattern Color matches input color
+            if (patternTurnColor === color.valueOf()) {
+                //If the Turn Number is at the length of turn
+                if (turn === this.pattern.length) {
+                    this.validatePatternSource.complete();
+                }
+                else {
+                    this.validatePatternSource.next(1);
+                }
+            }
+            //If the pattern color doesnt match the input color
+            this.validatePatternSource.next(2);
         }
-        return Promise.resolve(false);
+        //No pattern means a game hasnt been started
+        this.validatePatternSource.next(0);
     };
     PatternService.prototype.deletePattern = function () {
         this.pattern = new Array(0);
@@ -78,9 +95,9 @@ var PatternService = (function () {
             case 1:
                 return game_module_1.Color.RED;
             case 2:
-                return game_module_1.Color.BLUE;
-            case 3:
                 return game_module_1.Color.YELLOW;
+            case 3:
+                return game_module_1.Color.BLUE;
         }
         return undefined;
     };

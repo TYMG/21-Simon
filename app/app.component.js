@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var Rx_1 = require('rxjs/Rx');
+var BehaviorSubject_1 = require('rxjs/BehaviorSubject');
 var pattern_service_1 = require('./engine/pattern-service');
 var game_module_1 = require('./engine/game-module');
 var AppComponent = (function () {
@@ -18,42 +19,150 @@ var AppComponent = (function () {
         this.ACTIVE = "active";
         this.pattern = new Array(0);
         this.status = game_module_1.GameStatus.NOT_RUNNING;
+        this.turn = 1;
     }
+    AppComponent.prototype.ngOnInit = function () {
+    };
     AppComponent.prototype.startGame = function () {
-        var _this = this;
         //Check if the game is started
-        if (this.status === game_module_1.GameStatus.RUNNING) {
-        }
-        //Call Pattern Service to create the pattern
-        this.patternService.createPattern().then(function (pattern) { return _this.pattern = pattern; });
-        if (this.pattern.length === 0) {
-        }
+        /*  if (this.status === GameStatus.RUNNING) {
+            //Ask if the user wants to reset the game;
+          }*/
+        /* Call Pattern Service to create the pattern, using Promise's then prevents the code from
+        executing without the pattern */
+        this.patternService.createPattern().then(function (pattern) { return newPattern(pattern); });
         //Change the status to RUNNING
-        this.status = game_module_1.GameStatus.RUNNING;
+        //this.status = GameStatus.RUNNING;
         //Display the pattern
         var that = this;
-        this.displayPattern(0, undefined, this.pattern);
-        //Start the timer
-        this.startTimer();
+        var newPattern = function (pattern) {
+            that.displayPattern(0, undefined, pattern);
+        };
+        return;
+    };
+    /**
+     * CreateTurn will
+     *    killClock if Active
+     *    increment the turn by one
+     *    start new clock
+     */
+    AppComponent.prototype.createTurn = function () {
+        var that = this;
+        if (that !== undefined) {
+            that.killGameClock.bind(that);
+        }
+        var currentTurn = this.turn += 1;
+        this.startGameClock();
+    };
+    /**
+     *
+     * startGameClock takes in a turn
+     */
+    AppComponent.prototype.startGameClock = function () {
+        var _this = this;
+        var that = this;
+        //Retrive the patternService validatePattern Subject
+        var patternValidationSubject = this.patternService.validatePatternSource;
+        /*
+          Create a observer to subscribe to the Subject
+          If the Game receives Err from PatternValidation  (Pattern is incorrect)
+            The timer does not need to restart
+              The game is over
+          So if the clock receives a next(turnNumber)
+              The button the player clicked was right.
+              The timer needs to restart and wait for input again
+          If the clock receives a complete()
+              The player correctly entered a full pattern
+              Call next(Level Num)
+          */
+        var gameObserver = {
+            next: function (x) { return that.validateResponse.bind(that, x); },
+            error: function (err) { return that.endGame.bind(that, err); },
+            complete: function () { return that.nextLevel.bind(that); },
+        };
+        patternValidationSubject.subscribe(gameObserver);
+        //Create the Multicast Clock
+        this.clockMulticast = this.createClockMulticast();
+        //subscribe to the clockMulticast, if the clock emit an Error, kill the game
+        this.unsubscribed = this.clockMulticast.subscribe({
+            error: function (err) { return _this.endGame(); }
+        });
+        console.log("Test");
+    };
+    AppComponent.prototype.killGameClock = function (subscriber) {
+        if (subscriber !== undefined) {
+            subscriber.unsubscribe();
+        }
+    };
+    /**
+   * The createClockMulticast function will create a Clock Observable that contains a the setTimeout function
+   * which will call Observer.Error after 3 secs
+   *
+   *
+   */
+    AppComponent.prototype.createClockMulticast = function () {
+        var clockObservable = Rx_1.Observable.create(function (observer) {
+            var intervalID = setTimeout(function () {
+                observer.error('timeout');
+            }, 3000);
+            // Provide a way of canceling and disposing the interval resource
+            return function unsubscribe() {
+                //kill the timeOut
+                clearTimeout(this.intervalID);
+            };
+        });
+        var clockSubject = new BehaviorSubject_1.BehaviorSubject(false);
+        /*
+        refCount makes the multicasted Observable automatically start executing when the first subscriber arrives,
+         and stop executing when the last subscriber leaves.
+        */
+        var multicasted = clockObservable.multicast(clockSubject).refCount();
+        ;
+        return multicasted;
+    };
+    /**
+      * validateResponse will recieve a "good" or "bad" return
+      */
+    AppComponent.prototype.validateResponse = function (response) {
+        if (response !== undefined) {
+            if (response === 'pass') {
+                this.createTurn();
+            }
+            else if (response === 'fail') {
+                this.endGame();
+            }
+        }
+        return;
+    };
+    /**
+     * nextLevel will
+     *    zero out the turn counter
+     *    increment the level
+     */
+    AppComponent.prototype.nextLevel = function () {
+        this.turn == 0;
+        this.level += 1;
+        var newPattern = this.patternService.updatePattern();
+        newPattern.then(function (newPattern) {
+            this.displayPattern(0, undefined, newPattern);
+        });
     };
     AppComponent.prototype.endGame = function () {
+        var unsubscribe = this.unsubscribed;
+        this.killGameClock(unsubscribe);
         //Set the game status to NOT_RUNNING
-        this.status = game_module_1.GameStatus.NOT_RUNNING;
+        //that.status = GameStatus.NOT_RUNNING;
         //delete the pattern
-        var result;
-        this.patternService.deletePattern().then(function (response) { return result = response; });
-        if (!result) {
-        }
+        this.patternService.deletePattern().then(function (response) { return deleted(response); });
+        var deleted = function (result) {
+            if (!result) {
+            }
+            console.log("GAME OVER");
+        };
     };
     AppComponent.prototype.resetGame = function () {
         this.endGame();
         this.startGame();
-    };
-    AppComponent.prototype.startTimer = function () {
-        var _this = this;
-        //Start a timer with Zero Delay, that emits a number every second.
-        this.timer = Rx_1.Observable.timer(0, 1000);
-        this.timer.subscribe(function (t) { return _this.timeElapsed; });
     };
     /**
      * displayPattern is a recursive function that will turn on and off buttons based
@@ -69,24 +178,14 @@ var AppComponent = (function () {
         //remove prev color if exists
         if (prevColor !== undefined) {
             console.log("Deactivating Color: " + prevColor);
-            switch (prevColor) {
-                case 0:
-                    //Color.GREEN;
-                    document.getElementById('simon-button-top-left').style.backgroundColor = "rgba(0, 128, 0, .6)";
-                    break;
-                case 1:
-                    //Color.RED;
-                    document.getElementById('simon-button-top-right').style.backgroundColor = "rgba(255,0,0,.6)";
-                    break;
-                case 2:
-                    //Color.YELLOW;
-                    document.getElementById('simon-button-bottom-left').style.backgroundColor = "rgba(255,255,0,.6)";
-                    break;
-                case 3:
-                    //Color.BLUE;
-                    document.getElementById('simon-button-bottom-right').style.backgroundColor = "rgba(9,60,255,.6)";
-                    break;
-            }
+            //Color.GREEN;
+            document.getElementById('simon-button-top-left').style.backgroundColor = null;
+            //Color.RED;
+            document.getElementById('simon-button-top-right').style.backgroundColor = null;
+            //Color.YELLOW;
+            document.getElementById('simon-button-bottom-left').style.backgroundColor = null;
+            //Color.BLUE;
+            document.getElementById('simon-button-bottom-right').style.backgroundColor = null;
             /**
              * call setTimout with much shorter time.
              * Have the timeOut have displayPattern again with same index,pattern, but no prevColor
@@ -98,6 +197,10 @@ var AppComponent = (function () {
         else {
             //first case: the index is pattern.size; exit out of bounds
             if (index === pattern.length) {
+                //once the pattern finishes, the GameClock should start
+                setTimeout(function () {
+                    that.startGameClock();
+                }, 2000);
                 return;
             }
             //get next color
@@ -132,11 +235,15 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.gameButtonClick = function ($event) {
         console.log($event);
+        var clickValue = $event.value - 1;
+        this.patternService.validatePattern(clickValue, this.turn);
     };
     AppComponent.prototype.startButtonClick = function ($event) {
         console.log($event);
-        var pattern = this.patternService.generateTestPattern(2);
-        this.displayPattern(0, undefined, pattern);
+        var that = this;
+        var startGame = this.startGame;
+        var startGameBound = startGame.bind(that);
+        startGameBound();
     };
     AppComponent = __decorate([
         core_1.Component({
