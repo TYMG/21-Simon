@@ -8,41 +8,34 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var Rx_1 = require('rxjs/Rx');
-var BehaviorSubject_1 = require('rxjs/BehaviorSubject');
+const core_1 = require('@angular/core');
+const Rx_1 = require('rxjs/Rx');
+const BehaviorSubject_1 = require('rxjs/BehaviorSubject');
 /**
  *
  * GameService
  *
  */
-var GameService = (function () {
-    function GameService() {
-    }
-    GameService.prototype.createClockMulticast = function () {
+let TimerService = class TimerService {
+    createClockMulticast() {
         var clockObservable = Rx_1.Observable.create(function (observer) {
-            var intervalID = setTimeout(function () {
+            let timeoutClock = setTimeout(() => {
+                console.log("TIME OUT");
                 observer.error('timeout');
             }, 3000);
             // Provide a way of canceling and disposing the interval resource
             return function unsubscribe() {
                 //kill the timeOut
-                clearTimeout(this.intervalID);
+                clearTimeout(timeoutClock);
             };
         });
-        var clockSubject = new BehaviorSubject_1.BehaviorSubject(false);
-        /*
-        refCount makes the multicasted Observable automatically start executing when the first subscriber arrives,
-         and stop executing when the last subscriber leaves.
-        */
-        var multicasted = clockObservable.multicast(clockSubject).refCount();
-        return Promise.resolve(multicasted);
-    };
-    GameService = __decorate([
-        core_1.Injectable(), 
-        __metadata('design:paramtypes', [])
-    ], GameService);
-    return GameService;
-}());
-exports.GameService = GameService;
+        let clockSubject = new BehaviorSubject_1.BehaviorSubject(false);
+        return Promise.resolve(clockObservable);
+    }
+};
+TimerService = __decorate([
+    core_1.Injectable(), 
+    __metadata('design:paramtypes', [])
+], TimerService);
+exports.TimerService = TimerService;
 //# sourceMappingURL=timer-service.js.map

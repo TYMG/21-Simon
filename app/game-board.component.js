@@ -8,39 +8,38 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var GameBoardComponent = (function () {
-    function GameBoardComponent() {
+const core_1 = require('@angular/core');
+let GameBoardComponent = class GameBoardComponent {
+    constructor() {
         this.gamepadButtonEvent = new core_1.EventEmitter();
         this.startButtonEvent = new core_1.EventEmitter();
     }
-    GameBoardComponent.prototype.simonButtonClick = function (buttonIndex) {
+    simonButtonClick(buttonIndex) {
         this.gamepadButtonEvent.emit({
             value: buttonIndex
         });
-    };
-    GameBoardComponent.prototype.simonStartButton = function () {
+    }
+    simonStartButton() {
         this.startButtonEvent.emit({
             value: true
         });
-    };
-    __decorate([
-        core_1.Output(), 
-        __metadata('design:type', Object)
-    ], GameBoardComponent.prototype, "gamepadButtonEvent", void 0);
-    __decorate([
-        core_1.Output(), 
-        __metadata('design:type', Object)
-    ], GameBoardComponent.prototype, "startButtonEvent", void 0);
-    GameBoardComponent = __decorate([
-        core_1.Component({
-            moduleId: module.id,
-            selector: 'game-board',
-            templateUrl: "game-board.html",
-        }), 
-        __metadata('design:paramtypes', [])
-    ], GameBoardComponent);
-    return GameBoardComponent;
-}());
+    }
+};
+__decorate([
+    core_1.Output(), 
+    __metadata('design:type', Object)
+], GameBoardComponent.prototype, "gamepadButtonEvent", void 0);
+__decorate([
+    core_1.Output(), 
+    __metadata('design:type', Object)
+], GameBoardComponent.prototype, "startButtonEvent", void 0);
+GameBoardComponent = __decorate([
+    core_1.Component({
+        moduleId: module.id,
+        selector: 'game-board',
+        templateUrl: "game-board.html",
+    }), 
+    __metadata('design:paramtypes', [])
+], GameBoardComponent);
 exports.GameBoardComponent = GameBoardComponent;
 //# sourceMappingURL=game-board.component.js.map

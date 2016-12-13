@@ -8,27 +8,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var core_1 = require('@angular/core');
-var platform_browser_1 = require('@angular/platform-browser');
-var app_component_1 = require('./app.component');
-var game_board_component_1 = require('./game-board.component');
-var pattern_service_1 = require('./engine/pattern-service');
-var AppModule = (function () {
-    function AppModule() {
-    }
-    AppModule = __decorate([
-        core_1.NgModule({
-            imports: [platform_browser_1.BrowserModule],
-            declarations: [
-                app_component_1.AppComponent,
-                game_board_component_1.GameBoardComponent
-            ],
-            providers: [pattern_service_1.PatternService],
-            bootstrap: [app_component_1.AppComponent]
-        }), 
-        __metadata('design:paramtypes', [])
-    ], AppModule);
-    return AppModule;
-}());
+const core_1 = require('@angular/core');
+const platform_browser_1 = require('@angular/platform-browser');
+const app_component_1 = require('./app.component');
+const game_board_component_1 = require('./game-board.component');
+const pattern_service_1 = require('./engine/pattern-service');
+const game_service_1 = require('./engine/game-service');
+const timer_service_1 = require('./engine/timer-service');
+let AppModule = class AppModule {
+};
+AppModule = __decorate([
+    core_1.NgModule({
+        imports: [platform_browser_1.BrowserModule],
+        declarations: [
+            app_component_1.AppComponent,
+            game_board_component_1.GameBoardComponent
+        ],
+        providers: [
+            pattern_service_1.PatternService,
+            game_service_1.GameService,
+            timer_service_1.TimerService
+        ],
+        bootstrap: [app_component_1.AppComponent]
+    }), 
+    __metadata('design:paramtypes', [])
+], AppModule);
 exports.AppModule = AppModule;
 //# sourceMappingURL=app.module.js.map

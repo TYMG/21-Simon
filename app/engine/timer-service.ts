@@ -9,27 +9,25 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
  * 
  */
 @Injectable()
-export class GameService {
-    
+export class TimerService {
+
+private timer;    
+
 createClockMulticast(): Promise<Observable<boolean>> {
     var clockObservable = Observable.create(function (observer) {
 
-      var intervalID = setTimeout(() => {
+      let timeoutClock = setTimeout(() => {
+          console.log("TIME OUT")
         observer.error('timeout');
       }, 3000);
       // Provide a way of canceling and disposing the interval resource
       return function unsubscribe() {
         //kill the timeOut
-        clearTimeout(this.intervalID);
+        clearTimeout(timeoutClock);
       }
     });
     let clockSubject = new BehaviorSubject<boolean>(false);
-    /*
-    refCount makes the multicasted Observable automatically start executing when the first subscriber arrives,
-     and stop executing when the last subscriber leaves.
-    */
-    let multicasted = clockObservable.multicast(clockSubject).refCount();
-    return Promise.resolve(multicasted);
+    return Promise.resolve(clockObservable);
   }
 
 }

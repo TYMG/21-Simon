@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { GameStatus, Color, Difficulty } from './game-module';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Subject } from 'rxjs/Subject';
+
 
 
 /**
@@ -17,25 +19,32 @@ export class PatternService {
 
 
     // Observable validatePattern source
-    validatePatternSource = new BehaviorSubject<number>(0);
+    validatePatternSource = new Subject;
     // Observable navItem stream
     validateItem$ = this.validatePatternSource.asObservable();
     private pattern: Array<Color>;
+    private turn: number;
+
 
     createPattern(): Promise<Color[]> {
         let pattern: Array<Color> = [this.colorGenerator()];
         this.setPattern(pattern);
+        this.turn = 1;
         return Promise.resolve(pattern);
     }
 
-    updatePattern(): Promise<Color[]> {
-        if (this.getPattern != undefined) {
-            this.createPattern;
-            return;
+    updatePattern(pattern): Promise<Color[]> {
+        if (this.pattern === undefined) {
+            let newPattern: Array<Color> = [this.colorGenerator()];
+            this.turn = 1;
+            this.pattern = newPattern;
+        } else {
+            let newColor: Color = this.colorGenerator();
+            pattern.push(newColor);
+            this.turn = 1;
+            this.pattern = pattern;
         }
-        let newColor: Color = this.colorGenerator();
-        this.getPattern().push(newColor);
-        return Promise.resolve(this.getPattern());
+        return Promise.resolve(this.pattern);
     }
 
     /**
@@ -45,33 +54,40 @@ export class PatternService {
      * 
      * 
      */
-    validatePattern(color:Color, turn: number) {
+    validatePattern(color: Color) {
+        let turn = this.turn;
         if (color == undefined || turn == undefined) {
             //Should throw an exception, lazy
             this.validatePatternSource.error("No Pattern or Turn");
         }
-        if (this.pattern !== undefined){
+        if (this.pattern !== undefined) {
             let patternIndex = turn - 1;
             let patternTurnColor = this.pattern[patternIndex];
             //if the Pattern Color matches input color
             if (patternTurnColor === color.valueOf()) {
                 //If the Turn Number is at the length of turn
-                if (turn === this.pattern.length ){
-                    this.validatePatternSource.complete();
+                if (turn === this.pattern.length) {
+                    //once the pattern has been matched fully, turn should be zero
+                    this.turn = undefined;
+                    this.validatePatternSource.next(0);
+                    return;
                 } else {
+                    this.turn = turn+1;
                     this.validatePatternSource.next(1);
+                    return;
                 }
 
+            } else {
+                //If the pattern color doesnt match the input color
+                this.validatePatternSource.next(2);
+                this.validatePatternSource.error("INPUT DIDN'T MATCH PATTERN");
             }
-            //If the pattern color doesnt match the input color
-            this.validatePatternSource.next(2);
         }
         //No pattern means a game hasnt been started
-        this.validatePatternSource.next(0);
     }
 
     deletePattern(): Promise<boolean> {
-        this.pattern = new Array<Color>(0);
+        this.pattern = undefined;
         return Promise.resolve(true);
     }
 
@@ -110,4 +126,15 @@ export class PatternService {
         this.pattern = pattern;
     }
 
+    getTurn(): number {
+        return this.turn;
+    }
+
+    private setTurn(turn: number): void {
+        this.turn = turn;
+    }
+
+    resetTurn(): void {
+        this.turn = 1;
+    }
 }
